@@ -5,3 +5,6 @@ Contributors:
 * Viet M Bui (organic rice fed - Delta & SLR dude)
 * Ari Koeppel (sol3ling)
 * Shayla Triantafillou (river gal)
+* Karin Lehnigk (glof club)
+* Lucille Baker-Stahl (Soon to be Dr. B-S)
+* Tom Hoseason (tbd)
