@@ -6,5 +6,5 @@ Contributors:
 * Ari Koeppel (sol3ling)
 * Shayla Triantafillou (river gal)
 * Karin Lehnigk (glof club)
-* Lucille Baker-Stahl (Soon to be Dr. B-S)
+* Lucille Baker-Stahl (temperature + morphodynamics = ?)
 * Tom Hoseason (tbd)
