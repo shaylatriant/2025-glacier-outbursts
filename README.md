@@ -8,3 +8,17 @@ Contributors:
 * Karin Lehnigk (glof club)
 * Lucille Baker-Stahl (temperature + morphodynamics = ?)
 * Tom Hoseason (tbd)
+
+Project Summary
+  This project explores sediment movement in a de-glacieted landscape. We are going to do this by exploring lateral moraine diffusion and its interactions with fluvial transport. Moraine diffusion will be influenced by thawing of an ice-rich core (represented as "bedrock lowering") and diffusion will be calculated using a depth dependent diffusion componenent. 
+
+Project Steps:
+* Generate topography
+*   Must have down-valley slope, mirrored sin moraines parrallel to valley gradient
+* Classify sub-surface land classes
+* Diffusion
+* Ice melting
+* Channelized water flow
+* Sediment transport 
+
+
