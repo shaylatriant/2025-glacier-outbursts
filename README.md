@@ -10,6 +10,7 @@ Contributors:
 * Tom Hoseason (tbd)
 
 Project Summary
+![](dutch_baby_slice.png)
   This project explores sediment movement in a de-glacieted landscape. We are going to do this by exploring lateral moraine diffusion and its interactions with fluvial transport. Moraine diffusion will be influenced by thawing of an ice-rich core (represented as "bedrock lowering") and diffusion will be calculated using a depth dependent diffusion componenent. 
 
 Project Steps:
