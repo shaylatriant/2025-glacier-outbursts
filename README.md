@@ -1,5 +1,5 @@
-# 2025-glacier-outbursts
-ESPIn 2025 project exploring landscape influence of glacial outburst events.
+# 2025-postglacial-landscapes
+ESPIn 2025 project exploring landscape influence of glacier retreat.
 
 Contributors:
 * Viet M Bui (organic rice fed - Delta & SLR dude)
