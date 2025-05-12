@@ -103,8 +103,8 @@ grid.set_watershed_boundary_condition_outlet_id(
     50 , grid.at_node["topographic__elevation"], -9999.0
 )
 
-grid.imshow(grid.at_node['topographic__elevation'], color_for_closed = 'm')
-plt.show()
+# grid.imshow(grid.at_node['topographic__elevation'], color_for_closed = 'm')
+# plt.show()
 
 
 # ChannelProfiler parameters
@@ -184,22 +184,34 @@ while elapsed_time < run_time:  # Changed condition
     print(f"Elapsed time: {elapsed_time:.2f} years, Sediment flux: {sed_flux[count-1]:.2f} m^3/yr")
 
 
-# Instantiate figure
-fig = plt.figure()
+# Create a figure with 1 row and 2 columns
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 
-# Instantiate subplot
-plot = plt.subplot()
+# Plot topographic elevation in the first subplot
+plt.sca(axes[0])  # Set the current axis to the first subplot
+imshow_grid(
+    grid,
+    "topographic__elevation",
+    plot_name="Topographic Elevation",
+    var_name="Topographic Elevation",
+    var_units="m",
+    grid_units=("m", "m"),
+    color_for_closed='black',
+)
 
-# Show sediment flux map
+# Plot sediment flux in the second subplot
+plt.sca(axes[1])  # Set the current axis to the second subplot
 imshow_grid(
     grid,
     "sediment__flux",
-    plot_name="Sediment flux",
-    var_name="Sediment flux",
+    plot_name="Sediment Flux",
+    var_name="Sediment Flux",
     var_units=r"m$^3$/yr",
     grid_units=("m", "m"),
     cmap="terrain",
 )
+
+plt.tight_layout()
 plt.show()
 
 # channel deposition figure etc.
