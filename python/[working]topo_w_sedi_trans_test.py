@@ -9,6 +9,7 @@ from landlab.plot.graph import plot_graph
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import math
 
 #define the grid
 size_x = 100
@@ -113,10 +114,43 @@ minimum_channel_threshold=100
 # PriorityFloodFLowRouter parameters
 flow_metric = "D8"
 phi_FR = 0.0
+# OVERLAND FLOW parameters
+# We establish the channel width & upstream position on the grid
+channel_w = 20. # set channel width, meters
+channel_center = size_x/(2 * spacing)
+# print(channel_center)
+channel_diff = channel_w/2
+
+num_nodes = size_x * size_y / spacing - 1
+node_channel_left = int(num_nodes - channel_center - channel_diff)-size_x
+node_channel_right = int(num_nodes - channel_center + channel_diff)-size_x
+
+# We set fixed boundary conditions, specifying the nodes and links in which the water is flowing into the grid
+inlet_nodes = np.arange(math.floor(node_channel_left), math.ceil(node_channel_right), spacing).astype(int)
+
+# We set the fixed values in the entry nodes/links
+constant_Q = 100. # discharge value; m3/s
+Q_array = np.ones(len(inlet_nodes)) * constant_Q
+
+# We establish the initial conditions for depth (empty)
+h = grid.add_zeros("surface_water__depth", at="node", clobber=True)
+
+# Water velocity is zero in everywhere since there is no water yet
+vel = grid.add_zeros("surface_water__velocity", at="link", clobber=True)
+
+# Calculating the initial water surface elevation from water depth and topographic elevation
+wse = grid.add_field("surface_water__elevation", elev, at="node", clobber=True)
+
+# We set some other values
+mannings_n = 0.05 # Mannings roughness
+dt = 50 # Timestep; this is probably defined above/elsewhere
+
+# Instantiate the OverlandFlow component to work on this grid and run it
+of = OverlandFlow(grid, steep_slopes=True)
 
 # Instantiate flow router
 fr = FlowAccumulator(grid, flow_director="FlowDirectorD8")
-
+# fa = PriorityFloodFlowRouter(grid)
 # Flow routing
 # fr = PriorityFloodFlowRouter(
 # 	grid,
@@ -135,7 +169,7 @@ df = DepressionFinderAndRouter(grid)
 sp = Space(
     grid,
     K_sed=0.01, # Sediment erodibility, Governs the rate of sediment entrainment; may be specified as a single floating point number, an array of length equal to the number of grid nodes, or a string naming an existing grid field.
-    K_br=0.00001, # Bedrock erodibility, Governs the rate of bedrock erosion; may be specified as a single floating point number, an array of length equal to the number of grid nodes, or a string naming an existing grid field.
+    K_br=0.0001, # Bedrock erodibility, Governs the rate of bedrock erosion; may be specified as a single floating point number, an array of length equal to the number of grid nodes, or a string naming an existing grid field.
     F_f=0.0, # Fraction of fine sediment, (unitless, 0-1) fraction of rock that does not get converted to sediment but assumed to exit model domain as wash load
     phi=0.0, # Sediment porosity
     H_star=1.0, # Sediment entrainment length scale - think of reflecting bedrock surface roughness
@@ -148,19 +182,22 @@ sp = Space(
 
 # Set model timestep
 timestep = 50.0  # years
-
 # Set elapsed time to zero
 elapsed_time = 0.0  # years
-
 # Set timestep count to zero
 count = 0
-
 # Set model run time
-run_time = 200  # years
-
+run_time = 500  # years
 # Array to save sediment flux values
 sed_flux = np.zeros(int(run_time // timestep))  # Adjusted size
 node_next_to_outlet = 151
+
+
+# Give the downward component of each inlet node a discharge corresponding to constant_Q
+for n in inlet_nodes:
+    links = grid.links_at_node[n]  #links pointing dow
+    grid.at_link["surface_water__discharge"][links[3]] = constant_Q
+
 
 while elapsed_time < run_time:  # Changed condition
     # Run the flow router
@@ -171,6 +208,11 @@ while elapsed_time < run_time:  # Changed condition
 
     # Run SPACE for one time step
     sp.run_one_step(dt=timestep)
+
+    of.run_one_step()
+    for n in inlet_nodes:
+        links = grid.links_at_node[n]  #links pointing down
+        grid.at_link["surface_water__discharge"][links[3]] = constant_Q
 
     # Save sediment flux value to array
     sed_flux[count] = grid.at_node["sediment__flux"][node_next_to_outlet]
@@ -185,10 +227,10 @@ while elapsed_time < run_time:  # Changed condition
 
 
 # Create a figure with 1 row and 2 columns
-fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 
 # Plot topographic elevation in the first subplot
-plt.sca(axes[0])  # Set the current axis to the first subplot
+plt.sca(axes[0,0])  # Set the current axis to the first subplot
 imshow_grid(
     grid,
     "topographic__elevation",
@@ -200,7 +242,7 @@ imshow_grid(
 )
 
 # Plot sediment flux in the second subplot
-plt.sca(axes[1])  # Set the current axis to the second subplot
+plt.sca(axes[0,1])  # Set the current axis to the second subplot
 imshow_grid(
     grid,
     "sediment__flux",
@@ -209,6 +251,25 @@ imshow_grid(
     var_units=r"m$^3$/yr",
     grid_units=("m", "m"),
     cmap="terrain",
+)
+
+plt.sca(axes[1,0])  # Set the current axis to the third subplot
+imshow_grid(
+    grid,
+    'surface_water__depth',
+    plot_name="Surface water depth",
+    var_name="Surface water depth",
+    cmap="Blues",
+    var_units="m",
+)
+plt.sca(axes[1,1])  # Set the current axis to the third subplot
+imshow_grid(
+    grid,
+    'surface_water__elevation',
+    plot_name="Surface water elevation",
+    var_name="Surface water elevation",
+    cmap="Blues",
+    var_units="m",
 )
 
 plt.tight_layout()
