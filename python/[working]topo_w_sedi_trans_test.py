@@ -227,7 +227,7 @@ while elapsed_time < run_time:  # Changed condition
 
 
 # Create a figure with 1 row and 2 columns
-fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 
 # Plot topographic elevation in the first subplot
 plt.sca(axes[0,0])  # Set the current axis to the first subplot
