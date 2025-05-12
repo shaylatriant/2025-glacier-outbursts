@@ -83,7 +83,7 @@ grid.add_zeros("soil__depth", at="node", dtype = "float")
 # and assign it to the soil__depth
 grid.at_node["soil__depth"] = grid.at_node["soil_thickness"]
 
-z_ice = grid.add_ones("bedrock__elevation", at="node", dtype = "float")
+grid.add_ones("bedrock__elevation", at="node", dtype = "float")
 # Getting the calculated elevation that assigned into the ice_thickness at the beginning
 # and assign it to the bedrock__elevation
 # assuming ice is also bedrock
